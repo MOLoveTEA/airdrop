@@ -1,0 +1,90 @@
+﻿<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="renderer" content="webkit|ie-comp|ie-stand">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no" />
+    <meta http-equiv="Cache-Control" content="no-siteapp" />
+    <link href="__STATIC__/h-ui/css/H-ui.min.css" rel="stylesheet" type="text/css" />
+    <link href="__STATIC__/h-ui.admin/css/H-ui.login.css" rel="stylesheet" type="text/css" />
+    <link href="__STATIC__/h-ui.admin/css/style.css" rel="stylesheet" type="text/css" />
+    <link href="__STATIC__/h-ui.admin/lib/Hui-iconfont/1.0.8/iconfont.css" rel="stylesheet" type="text/css" />
+    <title>Airblock</title>
+</head>
+<body>
+    <input type="hidden" id="TenantId" name="TenantId" value="" />
+    <div class="header"><h3 style="margin-left: 20px;">Airblock空投后台管理</h3></div>
+    <div class="loginWraper">
+        <div id="loginform" class="loginBox">
+            <form class="form form-horizontal" action="index.html" method="post">
+                <div class="row cl">
+                    <label class="form-label col-xs-3"><i class="Hui-iconfont">&#xe60d;</i></label>
+                    <div class="formControls col-xs-8">
+                        <input name="username" type="text" placeholder="用户名" class="input-text size-L">
+                    </div>
+                </div>
+                <input name="username" type="hidden" value="default" class="input-text size-L">
+                <div class="row cl">
+                    <label class="form-label col-xs-3"><i class="Hui-iconfont">&#xe60e;</i></label>
+                    <div class="formControls col-xs-8">
+                        <input name="password" type="password" placeholder="密码" class="input-text size-L">
+                    </div>
+                </div>
+                <div class="row cl">
+                  <div class="formControls col-xs-8 col-xs-offset-3">
+                    <input name="code" class="input-text size-L" type="text" placeholder="验证码" style="width:150px;">
+                    <img id="captcha" src="{:url('login/captcha')}"></div>
+                </div>
+                <div class="row cl">
+                    <div class="formControls col-xs-8 col-xs-offset-3">
+                        <input id="submit" type="button" class="btn btn-success radius size-L" value="&nbsp;登&nbsp;&nbsp;&nbsp;&nbsp;录&nbsp;">
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div class="footer">H-ui.admin v3.1</div>
+    <script type="text/javascript" src="__STATIC__/h-ui.admin/lib/jquery/1.9.1/jquery.min.js"></script> 
+    <script type="text/javascript" src="__STATIC__/h-ui.admin/js/sha1.js"></script> 
+    <script type="text/javascript" src="__STATIC__/h-ui/js/H-ui.min.js"></script>
+    <script>
+        $('#captcha').click(function(){
+            $(this).attr('src', '{:url('login/captcha')}');
+        });
+        $('#submit').on('click', function(event) {
+            event.preventDefault()
+            var username = $('input[name="username"]').val()
+            var code     = $('input[name="code"]').val()
+            var password = $('input[name="password"]').val()
+            $.ajax({
+                type : "GET",
+                url : '{:url('login/timestamp')}',
+                success : function(timestamp){
+                    $.ajax({
+                        type : "POST",
+                        url : "{:url('login/auth')}",
+                        data: {
+                            username  : username,
+                            password  : password,
+                            code      : code,
+                            timestamp : timestamp
+                        },
+                        dataType : "json",
+                        success : function(obj){
+                            if(obj.code == 0)
+                                window.location.href = "{:url('index/index')}"
+                            else{
+                                $('#captcha').trigger('click')
+                                alert(obj.message)
+                            }
+                        }
+                    });
+                }
+            });
+        });
+
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,52 @@
+{include file="public/header" /}
+
+<style>
+	.board {
+		margin: 50px auto;
+		width: 90%;
+		display: flex;
+		flex-direction: row;
+		align-items: center;
+	}
+
+	.board .item {
+		flex: 1;
+		text-align: center;
+	}
+
+	.board h1 {
+		font-size: 50px;
+		font-weight: bold;
+	}
+
+	.board h4 {
+		color: #666;
+	}
+</style>
+
+<div class="page-container">
+
+	<div class="f-14 c-danger" style="text-align: center;margin-top: 20px;">请先停用浏览器广告屏蔽插件！否则广告管理模块无法使用！</div>
+
+	<div class="board">
+		<div class="item">
+			<h1>{$total_token}</h1>
+			<h4>Token总数</h4>
+		</div>
+		<div class="item">
+			<h1>{$total_user}</h1>
+			<h4>用户总数</h4>
+		</div>
+		<div class="item">
+			<h1>{$today_token}</h1>
+			<h4>今日新增Token</h4>
+		</div>
+		<div class="item">
+			<h1>{$today_user}</h1>
+			<h4>今日新增用户</h4>
+		</div>
+	</div>
+
+</div>
+
+{include file="public/footer" /}

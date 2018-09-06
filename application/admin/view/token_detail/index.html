@@ -1,0 +1,89 @@
+{include file="public/header" /}
+
+<div class="page-container">
+	<div class="f-14 c-success">采集数据展示。</div>
+
+	<!-- <div class="cl pd-5 bg-1 bk-gray mt-20">
+		<span class="l">
+			<a class="btn btn-primary radius" data-title="添加队伍" data-href="{:url('token/edit',['id'=>0])}" onclick="showEdit(0)" href="javascript:;">
+				<i class="Hui-iconfont"></i> 添加队伍</a>
+		</span>
+	</div> -->
+	<div class="mt-20">
+		<table class="table table-border table-bordered table-hover table-bg table-sort">
+			<thead>
+				<tr class="text-c">
+					<th width="20">token_id</th>
+					<th width="40">fullname</th>
+					<!-- <th width="150">to_get_en</th> -->
+					<th width="90">to_get_cn</th>
+					<!-- <th width="90">information_en</th> -->
+					<th width="90">information_cn</th>
+					<th width="90">ico_bench</th>
+					<th width="90">official_website</th>
+					<th width="90">ico_data</th>
+					<th width="90">ico_token_price</th>
+					<th width="90">total_supply</th>
+					<th width="90">whitepapers</th>
+					<th width="90">ctime</th>
+					<th width="90">mtime</th>
+					<th width="20">操作</th>
+				</tr>
+			</thead>
+			<tbody>
+				<?php foreach ($list as $key => $v) : ?>
+				<tr class="text-c">
+					<td>{$v.token_id}</td>
+					<td>{$v.fullname}</td>
+					<!-- <td>{$v.to_get_en}</td> -->
+					<td>{$v.to_get_cn}</td>
+					<!-- <td>{$v.information_en}</td> -->
+					<td>{$v.information_cn}</td>
+					<td>{$v.ico_bench}</td>
+					<td>
+						<a href="{$v.official_website}">{$v.official_website}</a>
+					</td>
+					<td>{$v.ico_data}</td>
+					<td>{$v.ico_token_price}</td>
+					<td>{$v.total_supply}</td>
+					<td>
+						<a href="javascript:;" class="maincolor" onclick="showImage('{$v.whitepapers}')">点击查看</a>
+					</td>
+					<?php $v['ctime']=date("Y/m/d",$v['ctime']);?>
+					<?php $v['mtime']=date("Y/m/d",$v['mtime']);?>
+					<td>{$v.ctime}</td>
+					<td>{$v.mtime}</td>
+					<td>
+						<a title="编辑" href="javascript:;" onclick="showEdit('{$v.token_id}')" style="text-decoration:none">
+							<i class="Hui-iconfont"></i>
+						</a>
+					</td>
+				</tr>
+				<?php endforeach; ?>
+			</tbody>
+		</table>
+	</div>
+</div>
+
+<!-- 此页面业务相关的脚本 -->
+<script type="text/javascript" src="__STATIC__/h-ui.admin/lib/datatables/1.10.0/jquery.dataTables.min.js"></script>
+<script>
+	function showImage(url) {
+		if (url != '')
+			layer_show('查看', url)
+	}
+
+	function showEdit(id) {
+		if (id == 0)
+			// layer_show('新增', "edit/id/0")
+			layer('ad')
+		else
+			layer_show('编辑', "edit/id/" + id)
+	}
+
+	$('.table-sort').dataTable({
+		aaSorting: [[1, "desc"]],
+		bStateSave: true,
+		searching: true
+	});
+</script> {include file="public/footer" /}

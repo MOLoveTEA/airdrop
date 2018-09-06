@@ -1,0 +1,126 @@
+{include file="public/header" /}
+
+<div class="page-container">
+	<form class="form form-horizontal" id="submit_form">
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-2">token_detail编号</label>
+			<div class="formControls col-xs-8 col-sm-9">
+				<input type="text" class="input-text" value="{$data.token_id}" placeholder="" name="id" readonly="readonly" disabled="">
+
+			</div>
+		</div>
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-2">
+				<span class="c-red">*</span>如何获取(原文)</label>
+			<div class="formControls col-xs-8 col-sm-9">
+				<textarea maxlength="200" class="textarea" placeholder="" name="to_get_en">{$data.to_get_en}</textarea>
+			</div>
+		</div>
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-2">
+				<span class="c-red">*</span>如何获取(译文)</label>
+			<div class="formControls col-xs-8 col-sm-9">
+				<textarea maxlength="200" class="textarea" placeholder="" name="to_get_cn">{$data.to_get_cn}</textarea>
+			</div>
+		</div>
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-2">
+				<span class="c-red">*</span>简介（原文）</label>
+			<div class="formControls col-xs-8 col-sm-9">
+				<textarea maxlength="200" class="textarea" placeholder="" name="information_en">{$data.information_en}</textarea>
+			</div>
+		</div>
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-2">
+				<span class="c-red">*</span>简介（译文）</label>
+			<div class="formControls col-xs-8 col-sm-9">
+				<textarea maxlength="200" class="textarea" placeholder="" name="information_cn">{$data.information_cn}</textarea>
+			</div>
+		</div>
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-2">
+				<span class="c-red">*</span>ico_bench</label>
+			<div class="formControls col-xs-8 col-sm-9">
+				<input type="text" class="input-text" value="{$data.ico_bench}" placeholder="" name="expired" required="required">
+			</div>
+		</div>
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-2">
+				<span class="c-red">*</span>官网</label>
+			<div class="formControls col-xs-8 col-sm-9">
+				<input type="text" class="input-text" value="{$data.official_website}" placeholder="" name="rate" required="required">
+			</div>
+		</div>
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-2">
+				<span class="c-red">*</span>ico_data</label>
+			<div class="formControls col-xs-8 col-sm-9">
+				<input type="text" class="input-text" value="{$data.ico_data}" placeholder="" name="platform" required="required">
+			</div>
+		</div>
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-2">
+				<span class="c-red">*</span>ico_token_price</label>
+			<div class="formControls col-xs-8 col-sm-9">
+				<input type="text" class="input-text" value="{$data.ico_token_price}" placeholder="" name="tokens_per_airdrop" required="required">
+			</div>
+		</div>
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-2">
+				<span class="c-red">*</span>total_supply</label>
+			<div class="formControls col-xs-8 col-sm-9">
+				<input type="text" class="input-text" value="{$data.total_supply}" placeholder="" name="ticker" required="required">
+			</div>
+		</div>
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-2">
+				<span class="c-red">*</span>whitepapers</label>
+			<div class="formControls col-xs-8 col-sm-9">
+				<input type="text" class="input-text" value="{$data.whitepapers}" placeholder="" name="whitepapers" required="required">
+			</div>
+		</div>
+
+		<!-- <div class="row cl">
+			<label class="form-label col-xs-4 col-sm-2">whitepapers</label>
+			<div class="formControls col-xs-8 col-sm-9">
+				<input type="text" class="input-text" value="{$data.whitepapers}" placeholder="https://" name="whitepapers">
+				<p class="text-alert">为了减少服务器压力，请先在微信公众号后台素材管理处上传图片，再将图片地址复制在这里</p>
+			</div>
+		</div> -->
+		<div class="row">
+			<label class="form-label col-xs-4 col-sm-2"></label>
+			<div class="formControls col-xs-8 col-sm-9">
+			</div>
+		</div>
+		<div class="row cl">
+			<div class="col-xs-8 col-sm-9 col-xs-offset-4 col-sm-offset-2">
+				<button class="btn btn-primary radius" type="submit">
+					<i class="Hui-iconfont">&#xe632;</i> 保存</button>
+			</div>
+		</div>
+	</form>
+</div>
+
+<script type="text/javascript">
+
+	// 提交表单
+	$('#submit_form').on('submit', function () {
+		$(this).ajaxSubmit({
+			type: 'post',
+			url: "{$_actionUrl}",
+			success: function (obj) {
+				if (0 == obj.code) {
+					layer.msg('操作成功')
+					setTimeout(function () {
+						var index = parent.layer.getFrameIndex(window.name)
+						parent.location.replace(parent.location.href)
+						parent.layer.close(index)
+					}, 1500)
+				}
+				else
+					layer.msg(obj.message)
+			}
+		})
+		return false
+	})
+</script> {include file="public/footer" /}

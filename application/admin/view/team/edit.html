@@ -1,0 +1,73 @@
+{include file="public/header" /}
+
+<div class="page-container">
+	<form class="form form-horizontal" id="submit_form">
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-2">队伍编号</label>
+			<div class="formControls col-xs-8 col-sm-9">
+				<input type="text" class="input-text" value="{$data.id}" placeholder="默认当前最大编号+1" name="id" readonly="readonly" disabled="">
+			</div>
+		</div>
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>学校名称</label>
+			<div class="formControls col-xs-8 col-sm-9">
+				<input type="text" class="input-text" value="{$data.school}" placeholder="" name="school" required="required">
+			</div>
+		</div>
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>队伍名称</label>
+			<div class="formControls col-xs-8 col-sm-9">
+				<input type="text" class="input-text" value="{$data.title}" placeholder="" name="title" required="required">
+			</div>
+		</div>
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-2">队伍介绍</label>
+			<div class="formControls col-xs-8 col-sm-9">
+				<textarea maxlength="200" class="textarea" placeholder="" name="introduce">{$data.introduce}</textarea>
+			</div>
+		</div>
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-2">投票封面图</label>
+			<div class="formControls col-xs-8 col-sm-9">
+				<input type="text" class="input-text" value="{$data.image}" placeholder="https://" name="image">
+				<p class="text-alert">为了减少服务器压力，请先在微信公众号后台素材管理处上传图片，再将图片地址复制在这里</p>
+			</div>
+		</div>
+		<div class="row">
+			<label class="form-label col-xs-4 col-sm-2"></label>
+			<div class="formControls col-xs-8 col-sm-9">
+			</div>
+		</div>
+		<div class="row cl">
+			<div class="col-xs-8 col-sm-9 col-xs-offset-4 col-sm-offset-2">
+				<button class="btn btn-primary radius" type="submit"><i class="Hui-iconfont">&#xe632;</i> 保存</button>
+			</div>
+		</div>
+	</form>
+</div>
+
+<script type="text/javascript">
+
+// 提交表单
+$('#submit_form').on('submit',function() {
+	$(this).ajaxSubmit({
+		type: 'post',
+		url: "{$_actionUrl}",
+		success: function(obj){
+			if(0 == obj.code) {
+				layer.msg('操作成功')
+				setTimeout( function () {
+					var index = parent.layer.getFrameIndex(window.name)
+					parent.location.replace(parent.location.href)
+					parent.layer.close(index)
+				}, 1500)
+			}
+			else
+				layer.msg(obj.message)
+		}
+	})
+	return false
+})
+</script>
+
+{include file="public/footer" /}

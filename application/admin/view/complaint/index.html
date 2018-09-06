@@ -1,0 +1,71 @@
+{include file="public/header" /}
+
+<div class="page-container">
+	<div class="f-14 c-success">吐槽列表</div>
+
+	<!-- <div class="cl pd-5 bg-1 bk-gray mt-20">
+		<span class="l">
+			<a class="btn btn-primary radius" data-title="添加队伍" data-href="{:url('token/edit',['id'=>0])}" onclick="showEdit(0)" href="javascript:;">
+				<i class="Hui-iconfont"></i> 添加队伍</a>
+		</span>
+	</div> -->
+	<div class="mt-20">
+		<table class="table table-border table-bordered table-hover table-bg table-sort">
+			<thead>
+				<tr class="text-c">
+					<th width="20">id</th>
+					<th width="40">token_id</th>
+					<th width="40">fullname</th>
+					<th width="90">user_id</th>
+					<th width="90">text</th>
+					<th width="90">ctime</th>
+					<th width="90">mtime</th>
+					<!-- <th width="20">操作</th> -->
+				</tr>
+			</thead>
+			<tbody>
+				<?php foreach ($list as $key => $v) : ?>
+				<tr class="text-c">
+					<td>{$v.id}</td>
+					<td>{$v.token_id}</td>
+					<td>{$v.fullname}</td>
+					<td>{$v.user_id}</td>
+					<td>{$v.text}</td>
+					<?php $v['ctime']=date("Y/m/d",$v['ctime']);?>
+					<?php $v['mtime']=date("Y/m/d",$v['mtime']);?>
+					<td>{$v.ctime}</td>
+					<td>{$v.mtime}</td>
+					<!-- <td>
+						<a title="编辑" href="javascript:;" onclick="showEdit('{$v.token_id}')" style="text-decoration:none">
+							<i class="Hui-iconfont"></i>
+						</a>
+					</td> -->
+				</tr>
+				<?php endforeach; ?>
+			</tbody>
+		</table>
+	</div>
+</div>
+
+<!-- 此页面业务相关的脚本 -->
+<script type="text/javascript" src="__STATIC__/h-ui.admin/lib/datatables/1.10.0/jquery.dataTables.min.js"></script>
+<script>
+	function showImage(url) {
+		if (url != '')
+			layer_show('查看', url)
+	}
+
+	function showEdit(id) {
+		if (id == 0)
+			// layer_show('新增', "edit/id/0")
+			layer('ad')
+		else
+			layer_show('编辑', "edit/id/" + id)
+	}
+
+	$('.table-sort').dataTable({
+		aaSorting: [[1, "desc"]],
+		bStateSave: true,
+		searching: true
+	});
+</script> {include file="public/footer" /}

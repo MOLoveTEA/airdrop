@@ -1,0 +1,150 @@
+{include file="public/header" /}
+
+<div class="page-container">
+	<form class="form form-horizontal" id="submit_form">
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-2">
+				ID
+			</label>
+			<div class="formControls col-xs-8 col-sm-9">
+				<input type="text" class="input-text" value="{$data.id}" placeholder="" name="id" readonly="readonly">
+			</div>
+		</div>
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-2">
+				<span class="c-red">*</span>全称
+			</label>
+			<div class="formControls col-xs-8 col-sm-9">
+				<input type="text" class="input-text" value="{$data.fullname}" placeholder="" name="fullname" required="required">
+			</div>
+		</div>
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-2">
+				<span class="c-red">*</span>简称
+			</label>
+			<div class="formControls col-xs-8 col-sm-9">
+				<input type="text" class="input-text" value="{$data.abbr}" placeholder="" name="abbr" required="required">
+			</div>
+		</div>
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-2">
+				<span class="c-red">*</span>价值
+			</label>
+			<div class="formControls col-xs-8 col-sm-9">
+				<input type="text" class="input-text" value="{$data.value}" placeholder="" name="value" required="required">
+			</div>
+		</div>
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-2">
+				<span class="c-red">*</span>状态
+			</label>
+			<div class="formControls col-xs-8 col-sm-9">
+				<select class="select valid" name="status">
+				<?php foreach (config('dictionary.status') as $key => $val): ?>
+					<option value="{$key}" <?=$data['status'] == $key ? 'selected' : ''?>>{$val}</option>
+				<?php endforeach; ?>
+				</select>
+			</div>
+		</div>
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-2">
+				<span class="c-red">*</span>排序</label>
+			<div class="formControls col-xs-8 col-sm-9">
+				<input type="text" class="input-text" value="{$data.listorder}" placeholder="" name="listorder" required="required">
+			</div>
+		</div>
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-2">
+				<span class="c-red">*</span>截止时间</label>
+			<div class="formControls col-xs-8 col-sm-9">
+				<input type="datetime-local" class="input-text" value="{:date('Y-m-d\\TH:i:s',$data.expired)}" placeholder="" name="expired" required="required">
+			</div>
+		</div>
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-2">
+				<span class="c-red">*</span>评分
+			</label>
+			<div class="formControls col-xs-8 col-sm-9">
+				<input type="number" min="1" max="5" step="1" class="input-text" value="{$data.rate}" placeholder="" name="rate" required="required">
+			</div>
+		</div>
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-2">
+				<span class="c-red">*</span>平台
+			</label>
+			<div class="formControls col-xs-8 col-sm-9">
+				<select class="select valid" name="platform">
+				<?php foreach (config('dictionary.platform') as $key => $val): ?>
+					<option value="{$key}" <?=$data['platform'] == $key ? 'selected' : ''?>>{$key}</option>
+				<?php endforeach; ?>
+				</select>
+			</div>
+		</div>
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-2">
+				<span class="c-red">*</span>每次空投Token
+			</label>
+			<div class="formControls col-xs-8 col-sm-9">
+				<input type="text" class="input-text" value="{$data.tokens_per_airdrop}" placeholder="" name="tokens_per_airdrop" required="required">
+			</div>
+		</div>
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-2">
+				<span class="c-red">*</span>代号Ticker
+			</label>
+			<div class="formControls col-xs-8 col-sm-9">
+				<input type="text" class="input-text" value="{$data.ticker}" placeholder="" name="ticker" required="required">
+			</div>
+		</div>
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-2">
+				<span class="c-red">*</span>获取难度
+			</label>
+			<div class="formControls col-xs-8 col-sm-9">
+				<select class="select valid" name="difficulty_degree">
+				<?php foreach (config('dictionary.difficulty_degree') as $key => $val): ?>
+					<option value="{$key}" <?=$data['difficulty_degree'] == $key ? 'selected' : ''?>>{$val}</option>
+				<?php endforeach; ?>
+				</select>
+			</div>
+		</div>
+
+		<div class="row">
+			<label class="form-label col-xs-4 col-sm-2">
+
+			</label>
+			<div class="formControls col-xs-8 col-sm-9">
+			</div>
+		</div>
+		<div class="row cl">
+			<div class="col-xs-8 col-sm-9 col-xs-offset-4 col-sm-offset-2">
+				<button class="btn btn-primary radius" type="submit">
+					<i class="Hui-iconfont">&#xe632;</i> 保存</button>
+				</div>
+			</div>
+		</form>
+	</div>
+
+	<script type="text/javascript">
+
+	// 提交表单
+	$('#submit_form').on('submit', function () {
+		$(this).ajaxSubmit({
+			type: 'post',
+			url: "{$_actionUrl}",
+			success: function (obj) {
+				if (0 == obj.code) {
+					layer.msg('操作成功')
+					setTimeout(function () {
+						var index = parent.layer.getFrameIndex(window.name)
+						parent.location.replace(parent.location.href)
+						parent.layer.close(index)
+					}, 1500)
+				}
+				else
+					layer.msg(obj.message)
+			}
+		})
+		return false
+	})
+</script> {include file="public/footer" /}
