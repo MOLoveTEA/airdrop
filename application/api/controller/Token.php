@@ -4,23 +4,6 @@ use app\common\HttpsRequest;
 
 class Token extends Base
 {
-/**
- * list
- *状态筛选，搜索，page,pageSize
-
- *detail
- *id
- *
- * @return void
- */
-
-    /**
-     * 1、接口只要成功返回，无论是否有数据，状态码都应该是相同的。200是http的状态码，可以不需要接口直接回显。
-     * 2、get参数接收不要放在函数内部。一般对于非表单提交的情况，都是用get方式
-     * 3、列表接口，参数一定要有默认值。前端不可能保证每次都把那么多参数完整传过来的
-     * 4、接口返回的数据主字段要统一，比如都放在data中。因为前端会封装请求方法，请求成功时直接拿data里面全部数据再处理。
-     */
-
     /**
      * 获取token列表
      * @param  integer $status   token状态
@@ -48,10 +31,9 @@ class Token extends Base
 
         $start = $pageSize * ($page - 1);
 
-        // 这里是数据库操作，不用实例化模型。如果用模型写应该写一个公用的listing。另外tp5.1不需要toArray了，5.0才需要
+       
         $data['list'] = db('token')->where($cdt)->limit($start, $pageSize)->order(['listorder'=>'desc','ctime'=>'desc'])->select();
         $data['list'] = $this->convent($data['list']);
-        // count应该是总记录数，不需要除以分页，这个交给前端自己处理
         $data['count'] = db('token')->where($cdt)->count();
         return $this->output($data);
     }

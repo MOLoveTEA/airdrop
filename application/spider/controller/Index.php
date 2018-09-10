@@ -5,26 +5,6 @@ use think\Controller;
 
 class Index extends \think\Controller
 {
-    /**
-     * 1、等号两边一律加空格
-     * 2、逗号后面加空格
-     * 3、尽量不要新开变量，改用数组，不然后期写数据库不方便
-     * 4、不要在主函数写太多var_dump
-     * 5、不要在一个函数里写完逻辑，否则运维、调试很麻烦。比如处理列表，处理详情可以分开
-     */
-
-    /**
-     * 6、方法内变量名尽量简短。因为大部分方法都封装起来了，变量不会在外部使用，只需要保证该方法内不会混淆就行了
-     *    比如matchTokenDetail函数内，可直接命名为$content，不需要$content_detail。
-     * 7、if的替代函数：A && B 仅当A条件true时，执行B语句
-     * 8、只会匹配到一个值的情况下用 preg_match。preg_match在匹配到第一个值后会停止查询，效率比preg_match_all高
-     */
-
-    /**
-     * 9、尽可能减少使用sql查询。对于大部分项目来说，服务器的性能瓶颈都是出现在数据库上，而不是php
-     * 所以宁愿使用1条查询查1000条数据，也不要1000次查一条数据。在判断token是否存在时，最好一次性将所有token的id和fullname取出来，再用foreach判断
-     * 10、多表同时插的时候可以用事务操作。保证数据一致性
-     */
 
     /* 爬虫主地址 */
     private $spiderUrl = 'https://www.airdropsmob.com/';
@@ -68,7 +48,6 @@ class Index extends \think\Controller
         }
         $token_list = $this->getTokenList($page);
         $urls       = [];
-        // remark:获取到tokenlist的时候，直接判断哪些在数据库已经存在了，存在的也不用getDetail了。
         foreach ($token_list as $i => $val) {
             $string = strtolower($val['token_name']);
             if (in_array($string, $this->currentList)) {
@@ -82,7 +61,6 @@ class Index extends \think\Controller
             $details = $this->getPageContent($urls);
             foreach ($details as $i => $val) {
                 $detail = $this->matchTokenDetail($val);
-                // var_dump($detail);
                 $data  = array_merge($detail, $token_list[$i]);
                 $model = model('Token');
                 $token = $model->mapping($data);

@@ -2,7 +2,7 @@
 namespace app\admin\controller;
 
 /**
- * 队伍管理
+ * token管理
  */
 class Token extends Base
 {

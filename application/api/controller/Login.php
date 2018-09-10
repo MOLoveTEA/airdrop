@@ -5,12 +5,6 @@ use think\facade\Log;
 
 class Login extends Base
 {
-    /**
-     * 1、请求很常用，可以做个公有类
-     * 2、函数返回记得return
-     * 3、session_id方法用错了
-     */
-
     public function weixin($jscode)
     {
         $APPID = config('weixin.appid');
@@ -23,8 +17,6 @@ class Login extends Base
 
         if (isset($res['openid'])) {
             $model = model('admin/User');
-
-            // 用户id可以一次拿出来，isExistsOpenid直接返回id即可，一定要减少数据库操作
             $uid = $model->isExistsOpenid($res['openid']);
             if (!$uid) {
                 $uid = db('user')->insertGetId(['openid' => $res['openid'], 'ctime' => time(), 'mtime' => time()]);
