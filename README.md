@@ -1,159 +1,334 @@
-ThinkPHP 5.1
-===============
+#接口文档
 
-ThinkPHP5.1对底层架构做了进一步的改进，减少依赖，其主要特性包括：
+[TOC]
 
- + 采用容器统一管理对象
- + 支持Facade
- + 注解路由支持
- + 路由跨域请求支持
- + 配置和路由目录独立
- + 取消系统常量
- + 助手函数增强
- + 类库别名机制
- + 增加条件查询
- + 改进查询机制
- + 配置采用二级
- + 依赖注入完善
- + 中间件支持（V5.1.6+）
+## 约定
+
+### 接口地址
+
+正式服网址：https://airblock.uta0.cn/
+
+测试服网址：https://dev.airblock.uta0.cn/
+
+### 接口调用说明
+
+调用方式：将接口地址作为Pathinfo附在请求地址后，例如
+
+https://airblock.uta0.cn/token/listing
+
+成功请求的时候，输出结果均封装在data字段内，数据格式
+```json
+    {
+        "code": 0,
+        "msg": "ok",
+        "data": []
+    }
+```
+请求失败的时候返回数据格式
+```json
+    {
+        "code": 401,
+        "msg": "用户未登录",
+    }
+```
+
+## 数据定义
+
+### 全局状态码
+
+|状态码 |描述|
+|---|----|
+|0      |请求成功|
+|401    |用户未登录|
+|402    |查询错误|
+|403    |表单验证不通过|
+|404    |openid获取失败|
+
+### Token状态
+
+值 | 说明
+---|---
+0 | 进行中，有明确过期时间
+1 | 进行中，无明确过期时间
+2 | 已结束
+3 | 未知
+
+### Token简要信息
+
+| 字段 |              类型    |     描述|
+| ---------- |     ---  | ----------|
+| id |                int    | token ID |         
+| fullname |          string    |  token全称 |  
+| abbr |              string    |  名称缩写 |  
+| value |             string    |    价值 |  
+| status |            int    |   [token状态](#token状态)| 
+| expired |            int   |   空投过期时间 | 
+| rate |                int  |  项目评分星数 | 
+| platform |            string  | 平台 | 
+| tokens_per_airdrop |  string  | 每次空投价值 | 
+| difficulty_degree |    string |   获取难易度 | 
+| logo |                string  |  logo图片url | 
 
 
-> ThinkPHP5的运行环境要求PHP5.6以上。
+## 相关 API 接口
+
+### 用户登陆
+
+注意：请求任何数据前需要调用一次登录接口，并把返回的PHPSESSID写入cookies再进行请求，否则会提示“用户未登录”
+
+- url
+
+    `/login/weixin`
+
+- method
+
+    `GET`
+
+- input
+
+| 参数名 | 类型 | 是否必须 | 说明  |
+| -- | -- | --| -- |
+| jscode | string | 是 | 小程序jscode |
+
+- output
+
+| 参数名 | 类型 | 说明  |
+| -- | -- | -- |
+| phpsessid | string | 会话标识 |
+| expire | string | session过期时间 |
+
+```json
+{
+    "code": 0,
+    "data": {
+            "phpsessid": "eawefxg4678",// 会话标识
+            "expire": "139449333"// 过期时间
+
+    },
+    "msg": "ok"
+}
+```
 
 
-## 目录结构
+### token列表
 
-初始的目录结构如下：
+- url
 
-~~~
-www  WEB部署目录（或者子目录）
-├─application           应用目录
-│  ├─common             公共模块目录（可以更改）
-│  ├─module_name        模块目录
-│  │  ├─common.php      模块函数文件
-│  │  ├─controller      控制器目录
-│  │  ├─model           模型目录
-│  │  ├─view            视图目录
-│  │  └─ ...            更多类库目录
-│  │
-│  ├─command.php        命令行定义文件
-│  ├─common.php         公共函数文件
-│  └─tags.php           应用行为扩展定义文件
-│
-├─config                应用配置目录
-│  ├─module_name        模块配置目录
-│  │  ├─database.php    数据库配置
-│  │  ├─cache           缓存配置
-│  │  └─ ...            
-│  │
-│  ├─app.php            应用配置
-│  ├─cache.php          缓存配置
-│  ├─cookie.php         Cookie配置
-│  ├─database.php       数据库配置
-│  ├─log.php            日志配置
-│  ├─session.php        Session配置
-│  ├─template.php       模板引擎配置
-│  └─trace.php          Trace配置
-│
-├─route                 路由定义目录
-│  ├─route.php          路由定义
-│  └─...                更多
-│
-├─public                WEB目录（对外访问目录）
-│  ├─index.php          入口文件
-│  ├─router.php         快速测试文件
-│  └─.htaccess          用于apache的重写
-│
-├─thinkphp              框架系统目录
-│  ├─lang               语言文件目录
-│  ├─library            框架类库目录
-│  │  ├─think           Think类库包目录
-│  │  └─traits          系统Trait目录
-│  │
-│  ├─tpl                系统模板目录
-│  ├─base.php           基础定义文件
-│  ├─console.php        控制台入口文件
-│  ├─convention.php     框架惯例配置文件
-│  ├─helper.php         助手函数文件
-│  ├─phpunit.xml        phpunit配置文件
-│  └─start.php          框架入口文件
-│
-├─extend                扩展类库目录
-├─runtime               应用的运行时目录（可写，可定制）
-├─vendor                第三方类库目录（Composer依赖库）
-├─build.php             自动生成定义文件（参考）
-├─composer.json         composer 定义文件
-├─LICENSE.txt           授权说明文件
-├─README.md             README 文件
-├─think                 命令行入口文件
-~~~
+    `/token/listing`
 
-> 可以使用php自带webserver快速测试
-> 切换到根目录后，启动命令：php think run
+- method
 
-## 升级指导
+    `GET`
 
-原有下面系统类库的命名空间需要调整：
+- input
 
-* think\App      => think\facade\App （或者 App ）
-* think\Cache    => think\facade\Cache （或者 Cache ）
-* think\Config   => think\facade\Config （或者 Config ）
-* think\Cookie   => think\facade\Cookie （或者 Cookie ）
-* think\Debug    => think\facade\Debug （或者 Debug ）
-* think\Hook     => think\facade\Hook （或者 Hook ）
-* think\Lang     => think\facade\Lang （或者 Lang ）
-* think\Log      => think\facade\Log （或者 Log ）
-* think\Request  => think\facade\Request （或者 Request ）
-* think\Response => think\facade\Reponse （或者 Reponse ）
-* think\Route    => think\facade\Route （或者 Route ）
-* think\Session  => think\facade\Session （或者 Session ）
-* think\Url      => think\facade\Url （或者 Url ）
+| 参数名 | 类型 | 是否必须 | 说明  |
+| -- | -- | --| -- |
+| status | int |否| [Token状态定义](#token状态) 全部状态时为 -1|         
+| search | string | 否 | 简称或全称关键字 |  
+| platform | string|否|     平台名称 |  
+| diff |      string|否|    获取难度 |  
+| page |      int|否|     页数 |  
+| pageSize |  int|否|     每页显示条数 | 
+  
+- output
 
-原有的配置文件config.php 拆分为app.php cache.php 等独立配置文件 放入config目录。
-原有的路由定义文件route.php 移动到route目录
+| 参数名 | 类型 | 说明  |
+| -- | -- | -- |
+| list | array json | [Token简要信息](#Token简要信息) |
+| count | int | 总记录数 |
 
-## 命名规范
+```json
+{
+    "code":0,
+    "msg":"ok",
+    "data":{
+        "list":[
+            // token简要信息
+        ],
+        "count":3244
+    }
+       
+}
+```
 
-`ThinkPHP5`遵循PSR-2命名规范和PSR-4自动加载规范，并且注意如下规范：
+### token详情列表
 
-### 目录和文件
+- url
 
-*   目录不强制规范，驼峰和小写+下划线模式均支持；
-*   类库、函数文件统一以`.php`为后缀；
-*   类的文件名均以命名空间定义，并且命名空间的路径和类库文件所在路径一致；
-*   类名和类文件名保持一致，统一采用驼峰法命名（首字母大写）；
+    `/token/detail`
 
-### 函数和类、属性命名
+- method
 
-*   类的命名采用驼峰法，并且首字母大写，例如 `User`、`UserType`，默认不需要添加后缀，例如`UserController`应该直接命名为`User`；
-*   函数的命名使用小写字母和下划线（小写字母开头）的方式，例如 `get_client_ip`；
-*   方法的命名使用驼峰法，并且首字母小写，例如 `getUserName`；
-*   属性的命名使用驼峰法，并且首字母小写，例如 `tableName`、`instance`；
-*   以双下划线“__”打头的函数或方法作为魔法方法，例如 `__call` 和 `__autoload`；
+    `GET`
 
-### 常量和配置
+- input
 
-*   常量以大写字母和下划线命名，例如 `APP_PATH`和 `THINK_PATH`；
-*   配置参数以小写字母和下划线命名，例如 `url_route_on` 和`url_convert`；
+| 参数名 | 类型 | 是否必须 | 说明  |
+| -- | -- | --| -- |
+| id | int | 是 | token id |
 
-### 数据表和字段
+- output
 
-*   数据表和字段采用小写加下划线方式命名，并注意字段名不要以下划线开头，例如 `think_user` 表和 `user_name`字段，不建议使用驼峰和中文作为数据表字段命名。
+| 参数名 | 类型 | 说明  |
+| ---------- |         --- |   ----------|
+| id |                 int | token ID |         
+| fullname |           string |    token全称 |  
+| abbr |               string |   名称缩写 |  
+| value |              string |        价值 |  
+| status |            int  |     [token状态](#token状态) | 
+| expired |             int|     空投过期时间 | 
+| rate |               int |      项目评分星数 | 
+| platform |            string|          平台 | 
+| tokens_per_airdrop | string |      每次空投价值 | 
+| ticker |              string  |       票据名称 | 
+| difficulty_degree |   string |         获取难易度 | 
+| logo |               string |         项目logo地址 | 
+| to_get_en |         string  |         英文获取途径 | 
+| to_get_cn |         string  |           中文获取途径 | 
+| information_en |    string  |                  英文项目介绍 | 
+| information_cn |    string  |            中文项目介绍 | 
+| ico_bench |         string  |       IcoBench地址 | 
+| ico_data |           int |        ico日期 | 
+| ico_token_price |    string |    ico发行价 |        |
+| whitepapers |       string  |        白皮书链接 |
 
-## 参与开发
 
-请参阅 [ThinkPHP5 核心框架包](https://github.com/top-think/framework)。
+```json
+{
+    "code":0,
+    "msg":"ok",
+    "data":{
+        // Token详情信息
+    }
+}
+```
 
-## 版权信息
+### 网页浏览中转
 
-ThinkPHP遵循Apache2开源协议发布，并提供免费使用。
+- url
 
-本项目包含的第三方源码和二进制文件之版权信息另行标注。
+    `/token/webview`
 
-版权所有Copyright © 2006-2018 by ThinkPHP (http://thinkphp.cn)
+- method
 
-All rights reserved。
+    `GET`
 
-ThinkPHP® 商标和著作权所有者为上海顶想信息科技有限公司。
+- input
 
-更多细节参阅 [LICENSE.txt](LICENSE.txt)
+| 参数名 | 类型 | 是否必须 | 说明  |
+| -- | -- | --| -- |
+| url | string | 是 | 网址 |
+
+- output
+
+```string
+直接返回网页html内容
+```
+
+### 吐槽
+
+每个用户只能对每个token吐槽一次
+
+- url
+
+    `/complaint/make`
+
+- method
+
+    `GET`
+
+- input
+
+| 参数名 | 类型 | 是否必须 | 说明  |
+| -- | -- | --| -- |
+| id | int | 是 | token id |
+| type | int | 是 | 类型 1-空投已结束 2-链接失效 |
+| content | string | 否 | 吐槽内容 |
+
+- output
+
+```json
+{
+    "code":0,
+    "msg":"ok",
+}
+```
+
+### 联系我们二维码
+
+- url
+
+    `user/linkus`
+
+- method
+
+    `GET`
+
+- input
+
+| 参数名 | 类型 | 是否必须 | 说明  |
+| -- | -- | --| -- |
+
+- output
+
+array json
+| 参数名 | 类型 | 说明  |
+| -- | -- | -- |
+| code_name | string | 二维码类型名称，如商务合作、微信公众号 |
+| count | string | 二维码图片url |
+
+
+```json
+{
+    "code": 0,
+    "data": [
+        {
+            "code_name": "商务合作",
+            "value": "http://xxxx" // 二维码url
+        },
+    ],
+    "msg": "ok"
+}
+```
+
+
+### 平台名称列表
+
+- url
+
+    `/token/platformList`
+
+- method
+
+    `GET`
+
+- input
+
+| 参数名 | 类型 | 是否可选 | 说明  |
+| -- | -- | --| -- |
+
+- output
+
+array json
+| 参数名 | 类型|说明|
+| ---------- | ----------|----------|
+| name | string |   平台名称简称|      
+| value | string |  平台全称|
+
+
+```json
+{
+    "code": 0,
+    "data": {
+        "list": [
+            {
+                "name": "ETH", // 简称
+                "value": "Ethereum" // 全称
+            }
+        ]
+    },
+    "msg": "ok"
+}
+
+```
